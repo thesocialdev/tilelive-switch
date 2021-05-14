@@ -1,5 +1,6 @@
 "use strict";
 const async = require('async');
+const LoadBalancer = require('./lib/LoadBalance');
 
 /**
  * This module works like a middleware to a specified source and
@@ -14,12 +15,12 @@ const async = require('async');
  */
 module.exports = function (tilelive, options) {
     const Switch = function (uri, callback) {
+        const self = this;
+        // TODO: support slow switch to mirrored source
+        self.enableMirror = uri.query.enableMirror || false;
+        const lbOptions = uri.query.loadBalancer || {};
+        self.lb = new LoadBalancer(lbOptions);
 
-        // TODO: add boolean variable to activate the mirroring or not
-        // TODO: implement naive approach to throttle a percentage of the traffic
-        // TODO: support slow switch to mirrored source?
-
-        var self = this;
         async.waterfall([
             async.apply(tilelive.load, uri.query.source),
             (tlsource, done) => {
@@ -37,9 +38,11 @@ module.exports = function (tilelive, options) {
     }
 
     Switch.prototype.getTile = function(z, x, y, callback) {
-        // Request the mirrored tile with no-op callback
-        // TODO: is it possible that this will create a memory leak?
-        this.mirror.getTile(z, x, y, () => {});
+        if (this.enableMirror && this.lb.enableSecondaryLoad()) {
+            // Request the mirrored tile with no-op callback
+            // TODO: is it possible that this will create a memory leak?
+            this.mirror.getTile(z, x, y, () => {});
+        }
         this.source.getTile(z, x, y, callback);
     }
     Switch.prototype.getInfo = function(callback) {

@@ -16,6 +16,11 @@ This module was created with Kartotherian in mind, and you can configure the sou
 switch:
   uri: switch://
   params:
-    source: { ref: tmsource }
+    source: { ref: tm2source }
     mirror: { ref: tegola }
+    enableMirror: true
+    loadBalancer:
+      bucketSize: 1000 # milliseconds
+      totalBuckets: 10 # number of buckets in the histogram
+      threshold: 0.1 # 10% of load to the mirrored source
 ```
