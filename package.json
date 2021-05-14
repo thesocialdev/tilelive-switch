@@ -1,0 +1,17 @@
+{
+  "name": "@wikimedia/kartotherian-tilelive-switch",
+  "version": "0.0.1",
+  "description": "A tilelive module that mirrors request to second source",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./tests/**/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.4.0"
+  }
+}
