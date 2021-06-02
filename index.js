@@ -53,7 +53,6 @@ module.exports = function (tilelive, options) {
     Switch.prototype._mirroredGetTile = function (z, x, y, callback) {
         if (this.lb.enableSecondaryLoad()) {
             // Request the mirrored tile with no-op callback
-            // TODO: is it possible that this will create a memory leak?
             this.secondarySource.getTile(z, x, y, () => {});
         }
         this.source.getTile(z, x, y, callback);
